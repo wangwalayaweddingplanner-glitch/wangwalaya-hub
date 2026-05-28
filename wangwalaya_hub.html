@@ -458,7 +458,12 @@ function loadJobsFromFirebase(callback) {
         // or "สิริมนต์ พันธุ์จันทร์ดี (แบม)" → "คุณแบม"
         function getNickname(str) {
           if (!str) return '';
-          return str.trim(); // use full name as-is from Firebase
+          // Remove anything in ( ), trim, skip คุณ/K./K prefix, take first name only
+          const clean = str.replace(/[(（][^)）]*[)）]/g, '').trim();
+          const parts = clean.split(/\s+/).filter(Boolean);
+          const skip = ['คุณ', 'K.', 'นาย', 'นาง', 'นางสาว'];
+          const start = skip.includes(parts[0]) ? 1 : 0;
+          return (parts[0] === 'K.' ? 'K.' : '') + (parts[start] || '');
         }
         const brideNick = getNickname(j.bride);
         const groomNick = getNickname(j.groom);
