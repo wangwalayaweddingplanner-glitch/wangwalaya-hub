@@ -503,6 +503,9 @@ function showScreen(id) {
 function goHome() { showScreen('home-screen'); }
 
 // RENDER JOBS
+const statusClass = { new: 'status-new', active: 'status-active', done: 'status-done', pending: 'status-pending' };
+const statusLabel = { new: 'งานใหม่', active: 'กำลังดำเนินการ', done: 'เสร็จแล้ว', pending: 'รอดำเนินการ' };
+
 function renderJobs() {
   const grid = document.getElementById('jobs-grid');
   grid.innerHTML = jobs.map(j => {
