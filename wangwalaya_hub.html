@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Wang Walaya — System Hub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&family=Sarabun:wght@400;500;600&display=swap&subset=thai,latin" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -76,7 +76,7 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
 .job-card:hover { border-color: var(--border-strong); box-shadow: var(--shadow); transform: translateY(-2px); }
 .job-card:hover::before { opacity: 1; }
 .job-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; gap: 8px; }
-.job-name { font-family: 'Sarabun', sans-serif !important; font-size: 17px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.job-name { font-family: 'Sarabun', sans-serif !important; font-weight: 500 !important; font-size: 17px; font-weight: 600; color: var(--text); line-height: 1.3; }
 .job-status { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
 .status-active { background: var(--green-bg); color: var(--green); }
 .status-pending { background: var(--orange-bg); color: var(--orange); }
@@ -242,6 +242,17 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
 
 * { font-variant-ligatures: none; }
 .job-name, .job-header-title { font-family: 'Sarabun', sans-serif !important; }
+
+@font-face {
+  font-family: 'ForceSarabun';
+  src: local('Sarabun');
+}
+.job-name {
+  font-family: 'Sarabun', sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 16px !important;
+}
+
 </style>
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -447,11 +458,7 @@ function loadJobsFromFirebase(callback) {
         // or "สิริมนต์ พันธุ์จันทร์ดี (แบม)" → "คุณแบม"
         function getNickname(str) {
           if (!str) return '';
-          // Remove parentheses content, remove คุณ prefix, take ONLY first word
-          const clean = str.replace(/[(（][^)）]*[)）]/g, '').trim();
-          const parts = clean.split(/\s+/).filter(Boolean);
-          const start = parts[0] === 'คุณ' ? 1 : 0;
-          return parts[start] || ''; // first name only, no surname
+          return str.trim(); // use full name as-is from Firebase
         }
         const brideNick = getNickname(j.bride);
         const groomNick = getNickname(j.groom);
