@@ -477,7 +477,7 @@ function doLogin() {
     document.getElementById('err-msg').textContent = '';
     showScreen('home-screen');
     // Show loading while fetching from Firebase
-    document.getElementById('jobs-list').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-light);font-size:14px;">⏳ กำลังโหลดข้อมูล...</div>';
+    document.getElementById('jobs-grid').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-light);font-size:14px;">⏳ กำลังโหลดข้อมูล...</div>';
     loadJobsFromFirebase(function() {
       renderJobs();
     });
