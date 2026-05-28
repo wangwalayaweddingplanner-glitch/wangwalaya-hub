@@ -439,10 +439,26 @@ function loadJobsFromFirebase(callback) {
         const keys = ['site','idea','team','quote','design','summary','ceremony','final','account'];
         return Math.min(keys.filter(k => steps[k] && steps[k].done).length + 1, 10);
       }
-      jobs = Object.values(val).map(j => ({
+      jobs = Object.values(val).map(j => {
+        // Extract nickname from parentheses e.g. "วิไลภรณ์ ภูกองชัย (Wilaiporn)" → "วิไลภรณ์"
+        // or "สิริมนต์ พันธุ์จันทร์ดี (แบม)" → "คุณแบม"
+        function getNickname(str) {
+          if (!str) return '';
+          const m = str.match(/\(([^)]+)\)/);
+          if (m) {
+            const nick = m[1];
+            // If Thai nickname (not English), prefix คุณ
+            return /[ก-๙]/.test(nick) ? 'คุณ'+nick : nick.split(' ')[0];
+          }
+          return str.split(' ')[0]; // fallback: first word
+        }
+        const brideNick = getNickname(j.bride);
+        const groomNick = getNickname(j.groom);
+        const displayName = [groomNick, brideNick].filter(Boolean).join(' & ') || j.bride || j.id;
+        return {
         id: j.id,
-        name: [(j.groom||'').split(' ')[0], (j.bride||'').split(' ')[0]].filter(Boolean).join(' & '),
-        fullName: [j.groom, j.bride].filter(Boolean).join(' & '),
+        name: displayName,
+        fullName: [j.groom, j.bride].filter(Boolean).join(' & ') || j.bride || '',
         date: toThaiDate(j.eventdate),
         venue: j.venue || '—',
         status: inferStatus(j),
@@ -455,7 +471,7 @@ function loadJobsFromFirebase(callback) {
         ceremonies: j.ceremonies || [],
         guests: j.guests ? parseInt(j.guests) : null,
         dep1: j.dep1||'', dep2: j.dep2||'', dep3: j.dep3||'',
-      })).sort((a,b) => {
+      };}).sort((a,b) => {
         const fa = val[a.id] && val[a.id].eventdate ? new Date(val[a.id].eventdate) : new Date('9999');
         const fb = val[b.id] && val[b.id].eventdate ? new Date(val[b.id].eventdate) : new Date('9999');
         return fa - fb;
